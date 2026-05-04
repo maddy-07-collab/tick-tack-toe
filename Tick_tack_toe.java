@@ -1,9 +1,14 @@
+import java.util.Random;
+
 public class TicTacToe {
 
-    // Step 1: Declare the 3x3 board
     static char[][] board = new char[3][3];
 
-    // Step 2: Initialize all cells with '-'
+    // UC2: new state variables
+    static char player1Symbol;
+    static char player2Symbol;
+    static int  currentPlayer;
+
     static void initializeBoard() {
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
@@ -12,21 +17,43 @@ public class TicTacToe {
         }
     }
 
-    // Step 3: Print the board in a readable format
     static void printBoard() {
         System.out.println("Tic-Tac-Toe Board:");
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
                 System.out.print(board[row][col]);
-                if (col < 2) System.out.print(" "); // space between columns
+                if (col < 2) System.out.print(" ");
             }
-            System.out.println(); // new line after each row
+            System.out.println();
         }
     }
 
-    // Step 4: Main method — entry point
+    // UC2: new method
+    static void tossAndAssignSymbols() {
+        Random random = new Random();
+        int tossResult = random.nextInt(2);
+
+        if (tossResult == 0) {
+            currentPlayer = 1;
+            player1Symbol = 'X';
+            player2Symbol = 'O';
+            System.out.println("Toss Result: Player 1 goes first!");
+        } else {
+            currentPlayer = 2;
+            player2Symbol = 'X';
+            player1Symbol = 'O';
+            System.out.println("Toss Result: Player 2 (Computer) goes first!");
+        }
+
+        System.out.println("Player 1 symbol : " + player1Symbol);
+        System.out.println("Player 2 symbol : " + player2Symbol);
+        System.out.println("First turn       : Player " + currentPlayer);
+    }
+
     public static void main(String[] args) {
         initializeBoard();
         printBoard();
+        System.out.println();
+        tossAndAssignSymbols();
     }
 }
