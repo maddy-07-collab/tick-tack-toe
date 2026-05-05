@@ -3,12 +3,18 @@ import java.util.Scanner;
 
 public class TicTacToe {
 
+    // ── UC1 ───────────────────────────────────────────────────────
     static char[][] board = new char[3][3];
+
+    // ── UC2 ───────────────────────────────────────────────────────
     static char player1Symbol;
     static char player2Symbol;
     static int  currentPlayer;
+
+    // ── UC3 ───────────────────────────────────────────────────────
     static Scanner scanner = new Scanner(System.in);
 
+    // ── UC1: Initialize board ─────────────────────────────────────
     static void initializeBoard() {
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
@@ -17,6 +23,7 @@ public class TicTacToe {
         }
     }
 
+    // ── UC1: Print board ──────────────────────────────────────────
     static void printBoard() {
         System.out.println("Tic-Tac-Toe Board:");
         for (int row = 0; row < 3; row++) {
@@ -28,6 +35,7 @@ public class TicTacToe {
         }
     }
 
+    // ── UC2: Toss and assign symbols ──────────────────────────────
     static void tossAndAssignSymbols() {
         Random random = new Random();
         int tossResult = random.nextInt(2);
@@ -49,12 +57,14 @@ public class TicTacToe {
         System.out.println("First turn       : Player " + currentPlayer);
     }
 
+    // ── UC3: Accept user slot input ───────────────────────────────
     static int getUserInput() {
         System.out.print("Enter a slot number (1-9): ");
         int slot = scanner.nextInt();
         return slot;
     }
 
+    // ── UC4: Convert slot → row & column ─────────────────────────
     static int getRow(int slot) {
         return (slot - 1) / 3;
     }
@@ -63,7 +73,7 @@ public class TicTacToe {
         return (slot - 1) % 3;
     }
 
-    // UC5: new validation method
+    // ── UC5: Validate the move ────────────────────────────────────
     static boolean isValidMove(int row, int col) {
         if (row < 0 || row > 2 || col < 0 || col > 2) {
             System.out.println("Invalid move! Slot is out of bounds.");
@@ -76,18 +86,30 @@ public class TicTacToe {
         return true;
     }
 
+    // ── UC6: Place symbol on the board ────────────────────────────
+    static void placeMove(int row, int col, char symbol) {
+        board[row][col] = symbol;   // State update — write symbol into the 2D array
+    }
+
+    // ── Main ──────────────────────────────────────────────────────
     public static void main(String[] args) {
-        initializeBoard();
-        printBoard();
+        initializeBoard();          // UC1
+        printBoard();               // UC1
         System.out.println();
-        tossAndAssignSymbols();
+        tossAndAssignSymbols();     // UC2
         System.out.println();
-        int slot = getUserInput();
-        int row  = getRow(slot);
-        int col  = getCol(slot);
-        if (isValidMove(row, col)) {
-            System.out.println("Move is valid! Slot " + slot
-                    + " → [Row: " + row + ", Col: " + col + "]");
+
+        int slot = getUserInput();  // UC3
+        int row  = getRow(slot);   // UC4
+        int col  = getCol(slot);   // UC4
+
+        if (isValidMove(row, col)) {                     // UC5
+            char symbol = (currentPlayer == 1)           // decide whose symbol
+                          ? player1Symbol
+                          : player2Symbol;
+            placeMove(row, col, symbol);                 // UC6
+            System.out.println("\nBoard after move:");
+            printBoard();                                // UC1 — show updated board
         } else {
             System.out.println("Please try again with a valid slot.");
         }
