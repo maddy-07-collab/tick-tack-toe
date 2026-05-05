@@ -10,6 +10,10 @@ public class TicTacToe {
     static Scanner scanner = new Scanner(System.in);
     static Random random = new Random();
 
+    // ── UC8: Game state flags ─────────────────────────────────────
+    static boolean gameOver = false;
+    static boolean isDraw   = false;
+
     static void initializeBoard() {
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
@@ -63,11 +67,9 @@ public class TicTacToe {
 
     static boolean isValidMove(int row, int col) {
         if (row < 0 || row > 2 || col < 0 || col > 2) {
-            System.out.println("Invalid move! Slot is out of bounds.");
             return false;
         }
         if (board[row][col] != '-') {
-            System.out.println("Invalid move! That slot is already taken.");
             return false;
         }
         return true;
@@ -77,43 +79,107 @@ public class TicTacToe {
         board[row][col] = symbol;
     }
 
-    // ── UC7: Computer makes a random valid move ───────────────────
     static void computerMove() {
         System.out.println("Computer is making a move...");
         int row, col;
         do {
-            int slot = random.nextInt(9) + 1;   // random slot 1–9
-            row = getRow(slot);                  // UC4 reused
-            col = getCol(slot);                  // UC4 reused
-        } while (!isValidMove(row, col));        // UC5 reused — loop until valid
-
-        placeMove(row, col, player2Symbol);      // UC6 reused
+            int slot = random.nextInt(9) + 1;
+            row = getRow(slot);
+            col = getCol(slot);
+        } while (!isValidMove(row, col));
+        placeMove(row, col, player2Symbol);
         System.out.println("Computer placed '" + player2Symbol
                 + "' at Row: " + row + ", Col: " + col);
     }
 
+    // ── UC8: Check for win ────────────────────────────────────────
+    static boolean checkWin(char symbol) {
+        // Check rows and columns
+        for (int i = 0; i < 3; i++) {
+            if (board[i][0] == symbol && board[i][1] == symbol && board[i][2] == symbol)
+                return true;
+            if (board[0][i] == symbol && board[1][i] == symbol && board[2][i] == symbol)
+                return true;
+        }
+        // Check diagonals
+        if (board[0][0] == symbol && board[1][1] == symbol && board[2][2] == symbol)
+            return true;
+        if (board[0][2] == symbol && board[1][1] == symbol && board[2][0] == symbol)
+            return true;
+        return false;
+    }
+
+    // ── UC8: Check for draw ───────────────────────────────────────
+    static boolean checkDraw() {
+        for (int row = 0; row < 3; row++) {
+            for (int col = 0; col < 3; col++) {
+                if (board[row][col] == '-') return false; // empty cell exists
+            }
+        }
+        return true; // no empty cells and no winner → draw
+    }
+
+    // ── UC8: Switch turn ──────────────────────────────────────────
+    static void switchTurn() {
+        currentPlayer = (currentPlayer == 1) ? 2 : 1;
+    }
+
+    // ── UC8: Game loop ────────────────────────────────────────────
+    static void startGameLoop() {
+        while (!gameOver) {
+            System.out.println("\n--- Player " + currentPlayer + "'s Turn ---");
+            printBoard();
+
+            if (currentPlayer == 1) {
+                // Human player move
+                int slot, row, col;
+                do {
+                    slot = getUserInput();
+                    row  = getRow(slot);
+                    col  = getCol(slot);
+                    if (!isValidMove(row, col)) {
+                        System.out.println("Invalid move! Try again.");
+                    }
+                } while (!isValidMove(row, col));
+                placeMove(row, col, player1Symbol);
+
+                if (checkWin(player1Symbol)) {
+                    printBoard();
+                    System.out.println("Player 1 wins!");
+                    gameOver = true;
+                } else if (checkDraw()) {
+                    printBoard();
+                    System.out.println("It's a draw!");
+                    gameOver = true;
+                    isDraw = true;
+                }
+
+            } else {
+                // Computer move
+                computerMove();
+
+                if (checkWin(player2Symbol)) {
+                    printBoard();
+                    System.out.println("Computer wins!");
+                    gameOver = true;
+                } else if (checkDraw()) {
+                    printBoard();
+                    System.out.println("It's a draw!");
+                    gameOver = true;
+                    isDraw = true;
+                }
+            }
+
+            if (!gameOver) {
+                switchTurn(); // alternate turns only if game is still on
+            }
+        }
+    }
+
     public static void main(String[] args) {
         initializeBoard();
-        printBoard();
-        System.out.println();
         tossAndAssignSymbols();
         System.out.println();
-
-        // Human move
-        int slot = getUserInput();
-        int row  = getRow(slot);
-        int col  = getCol(slot);
-        if (isValidMove(row, col)) {
-            placeMove(row, col, player1Symbol);
-            System.out.println("\nBoard after Player 1's move:");
-            printBoard();
-        }
-
-        System.out.println();
-
-        // Computer move
-        computerMove();
-        System.out.println("\nBoard after Computer's move:");
-        printBoard();
+        startGameLoop();   // UC8 — full game runs here
     }
 }
