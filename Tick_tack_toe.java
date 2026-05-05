@@ -55,13 +55,25 @@ public class TicTacToe {
         return slot;
     }
 
-    // UC4: two new utility methods
     static int getRow(int slot) {
         return (slot - 1) / 3;
     }
 
     static int getCol(int slot) {
         return (slot - 1) % 3;
+    }
+
+    // UC5: new validation method
+    static boolean isValidMove(int row, int col) {
+        if (row < 0 || row > 2 || col < 0 || col > 2) {
+            System.out.println("Invalid move! Slot is out of bounds.");
+            return false;
+        }
+        if (board[row][col] != '-') {
+            System.out.println("Invalid move! That slot is already taken.");
+            return false;
+        }
+        return true;
     }
 
     public static void main(String[] args) {
@@ -73,6 +85,11 @@ public class TicTacToe {
         int slot = getUserInput();
         int row  = getRow(slot);
         int col  = getCol(slot);
-        System.out.println("Slot " + slot + " → Row: " + row + ", Column: " + col);
+        if (isValidMove(row, col)) {
+            System.out.println("Move is valid! Slot " + slot
+                    + " → [Row: " + row + ", Col: " + col + "]");
+        } else {
+            System.out.println("Please try again with a valid slot.");
+        }
     }
 }
