@@ -7,8 +7,6 @@ public class TicTacToe {
     static char player1Symbol;
     static char player2Symbol;
     static int  currentPlayer;
-
-    // UC3: new scanner
     static Scanner scanner = new Scanner(System.in);
 
     static void initializeBoard() {
@@ -51,11 +49,19 @@ public class TicTacToe {
         System.out.println("First turn       : Player " + currentPlayer);
     }
 
-    // UC3: new method
     static int getUserInput() {
         System.out.print("Enter a slot number (1-9): ");
         int slot = scanner.nextInt();
         return slot;
+    }
+
+    // UC4: two new utility methods
+    static int getRow(int slot) {
+        return (slot - 1) / 3;
+    }
+
+    static int getCol(int slot) {
+        return (slot - 1) % 3;
     }
 
     public static void main(String[] args) {
@@ -65,6 +71,8 @@ public class TicTacToe {
         tossAndAssignSymbols();
         System.out.println();
         int slot = getUserInput();
-        System.out.println("You entered slot: " + slot);
+        int row  = getRow(slot);
+        int col  = getCol(slot);
+        System.out.println("Slot " + slot + " → Row: " + row + ", Column: " + col);
     }
 }
