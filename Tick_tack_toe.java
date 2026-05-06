@@ -81,51 +81,39 @@ public class TicTacToe {
                 + "' at Row: " + row + ", Col: " + col);
     }
 
-    // ── UC9: Check winning condition ──────────────────────────────
     static boolean checkWin(char symbol) {
-
-        // Check all 3 rows using a loop
         for (int i = 0; i < 3; i++) {
-            if (board[i][0] == symbol &&
-                board[i][1] == symbol &&
-                board[i][2] == symbol) {
-                return true;  // row i is a winning row
-            }
+            if (board[i][0] == symbol && board[i][1] == symbol && board[i][2] == symbol)
+                return true;
+            if (board[0][i] == symbol && board[1][i] == symbol && board[2][i] == symbol)
+                return true;
         }
-
-        // Check all 3 columns using a loop
-        for (int i = 0; i < 3; i++) {
-            if (board[0][i] == symbol &&
-                board[1][i] == symbol &&
-                board[2][i] == symbol) {
-                return true;  // column i is a winning column
-            }
-        }
-
-        // Check top-left → bottom-right diagonal
-        if (board[0][0] == symbol &&
-            board[1][1] == symbol &&
-            board[2][2] == symbol) {
+        if (board[0][0] == symbol && board[1][1] == symbol && board[2][2] == symbol)
             return true;
-        }
-
-        // Check top-right → bottom-left diagonal
-        if (board[0][2] == symbol &&
-            board[1][1] == symbol &&
-            board[2][0] == symbol) {
+        if (board[0][2] == symbol && board[1][1] == symbol && board[2][0] == symbol)
             return true;
-        }
-
-        return false; // no winning pattern found
+        return false;
     }
 
+    // ── UC10: Detect draw condition ───────────────────────────────
     static boolean checkDraw() {
+        int emptyCellCount = 0;   // counting logic
+
+        // loop traversal — scan every cell on the board
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
-                if (board[row][col] == '-') return false;
+                if (board[row][col] == '-') {
+                    emptyCellCount++;  // found an empty cell
+                }
             }
         }
-        return true;
+
+        // boolean flag — draw only when zero empty cells remain
+        if (emptyCellCount == 0) {
+            isDraw = true;   // set global draw flag
+            return true;
+        }
+        return false;
     }
 
     static void switchTurn() {
@@ -148,29 +136,27 @@ public class TicTacToe {
                 } while (!isValidMove(row, col));
                 placeMove(row, col, player1Symbol);
 
-                if (checkWin(player1Symbol)) {       // UC9 called here
+                if (checkWin(player1Symbol)) {
                     printBoard();
                     System.out.println("Player 1 wins!");
                     gameOver = true;
-                } else if (checkDraw()) {
+                } else if (checkDraw()) {        // UC10 called here
                     printBoard();
-                    System.out.println("It's a draw!");
+                    System.out.println("It's a draw! No more moves left.");
                     gameOver = true;
-                    isDraw = true;
                 }
 
             } else {
                 computerMove();
 
-                if (checkWin(player2Symbol)) {       // UC9 called here
+                if (checkWin(player2Symbol)) {
                     printBoard();
                     System.out.println("Computer wins!");
                     gameOver = true;
-                } else if (checkDraw()) {
+                } else if (checkDraw()) {        // UC10 called here
                     printBoard();
-                    System.out.println("It's a draw!");
+                    System.out.println("It's a draw! No more moves left.");
                     gameOver = true;
-                    isDraw = true;
                 }
             }
 
